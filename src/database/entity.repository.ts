@@ -1,6 +1,6 @@
-import { Document, FilterQuery, Model, ModelUpdateOptions, QueryOptions, UpdateQuery } from 'mongoose';
+import { Document, FilterQuery, Model,  UpdateQuery } from 'mongoose';
 
-export abstract class EntityRepository<T extends Document> {
+export abstract class EntityRepository<T extends Document, D> {
   constructor(protected readonly entityModel: Model<T>) {}
 
   async findOne(
@@ -20,14 +20,14 @@ export abstract class EntityRepository<T extends Document> {
     return this.entityModel.find(entityFilterQuery);
   }
 
-  async create(createEntityData: unknown): Promise<T> {
+  async create(createEntityData: Partial<D>): Promise<T> {
     const entity = new this.entityModel(createEntityData);
     return entity.save()
   }
 
   async findOneAndUpdate(
     entityFilterQuery: FilterQuery<T>,
-    updateEntityData: UpdateQuery<unknown>
+    updateEntityData: UpdateQuery<Partial<D>>
   ): Promise<T | null> {
     return this.entityModel.findOneAndUpdate(
       entityFilterQuery,
